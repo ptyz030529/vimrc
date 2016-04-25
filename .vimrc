@@ -36,6 +36,9 @@ Plugin  'vim-scripts/YankRing.vim'     " 剪贴板
 Plugin  'vim-scripts/grep.vim'         " 文件内容查找
 Plugin  'terryma/vim-multiple-cursors' " sublime text的多重光标选取功能, <C-n>选中光标下的单词, <C-p>往回选一个, <C-x>跳过下一个相同单词,按下c进行修改.<Esc> 退出
 Plugin  'scrooloose/nerdtree'          " 侧边栏文件导航
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin  'bling/vim-airline'             "状态栏
+Plugin 'vim-airline/vim-airline-themes'
 Plugin  'tpope/vim-surround'           " 包裹符号处理插件, cs<{ = 把<替换成{, ysiw[ = 把选中单词用[]包裹, yss{ = 把选中语句用{}包裹, ds{ = 删除选中周围的{}
 Plugin  'Yggdroot/indentLine'          "缩进线
 Plugin  'margaglia/Vim_Trinity_Plugin'  "整合taglist 和nerdtree
@@ -61,6 +64,7 @@ Plugin  'paulyg/Vim-PHP-Stuff'                   " php5.3语法高亮
 Plugin  'tpope/vim-haml'                         " Haml, Sass, and SCSS语法高亮
 Plugin  'nono/vim-handlebars'                    " handlebars语法高亮
 Plugin  'othree/yajs.vim'                        " es6语法高亮
+Plugin 'mxw/vim-jsx'
 Plugin  'lukaszb/vim-web-indent'                 " web缩进
 Plugin  'skammer/vim-css-color'                  " css color
 
@@ -70,25 +74,34 @@ Plugin  'vimchina/vim-fencview'             " 自动识别文件编码
 Plugin  'vim-scripts/php.vim-html-enhanced' " 优化内嵌在php代码中的html
 
 "****工具
-
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'Shougo/vimshell.vim'
 Plugin  'Rykka/colorv.vim'                 " vim颜色选择器, (<leader>cd): show a GUI color picker.  (<leader>cn): show color name list window. :ColorV (<leader>cv): show ColorV window
 Plugin  'suan/vim-instant-markdown'        " 实时预览Markdown
 Plugin  'scturtle/vim-instant-markdown-py' " 实时预览Markdown
 Plugin  'scrooloose/vim-fugitive'          " git tool. Gstatus= git status. Gcommit= git commit. Gwrite = git add
+Plugin 'airblade/vim-gitgutter'
 "Plugin  'scrooloose/nerdcommenter' 
 
 "****编程辅助
+Plugin 'Shougo/neocomplete.vim'
+Plugin 'Shougo/unite.vim'
+Plugin 'Shougo/vimproc.vim'
+Plugin 'Shougo/deoplete.nvim'
+Plugin 'xolox/vim-easytags'
+Plugin 'xolox/vim-misc'
 Plugin  'SirVer/ultisnips'               " snippets
 Plugin  'honza/vim-snippets'             " snippets format
 Plugin  'vim-scripts/DoxygenToolkit.vim' " 自动生成各种注释
 Plugin  'edsono/vim-matchit'             " 使%能够匹配html标签
-Plugin  'vim-scripts/jsbeautify'         " js美化插件
+Plugin  'maksimr/vim-jsbeautify'         " js美化插件
 Plugin  'vim-scripts/assistant'          " 查看php，js默认函数的中文说明
 Plugin  'scrooloose/syntastic'           " 语法格式检查工具
 Plugin  'tomtom/tcomment_vim'            " 注释 gcc=注释, 选择后g>=注释选择区, gc<Count>c{motion}=注释几行, g<c=取消注释
 Plugin  'Raimondi/delimitMate'           " 自动补全逗号
 Plugin  'docunext/closetag.vim'          " 自动关闭标签
 Plugin  'Valloric/YouCompleteMe'         " 自动补全
+Plugin 'marijnh/tern_for_vim'
 Plugin  'mattn/emmet-vim'                " 快速html
 call vundle#end()
 
@@ -105,6 +118,78 @@ autocmd BufReadPost *
 if has("autocmd") && v:version>600
 	au BufRead,BufNew *.vim map <buffer> <leader><space> :w!<cr>:source %<cr>
 endif
+autocmd! BufRead,BufNewFile *.markdown set filetype=mkd
+autocmd! BufRead,BufNewFile *.md       set filetype=mkd
+autocmd! BufRead,BufNewFile,BufReadPost *.snippets set filetype=snippets
+autocmd! BufRead,BufNewFile *.json set filetype=json
+autocmd! BufRead,BufNewFile *.ts set filetype=typescript
+autocmd BufNewFile,BufRead *.vm set filetype=html
+autocmd BufNewFile,BufRead *.html.twig set filetype=html.twig
+autocmd BufNewFile,BufRead *.conf set filetype=config
+au BufRead,BufNewFile *.scss set filetype=scss.css
+autocmd BufNewFile,BufRead *.vm set filetype=html
+autocmd BufNewFile,BufRead *.coffee set filetype=coffee
+autocmd FileType haskell setlocal commentstring=--\ %s
+autocmd BufNewFile,BufRead *.rss setfiletype xml
+autocmd FileType xhtml,xml ru ftplugin/html/autoclosetag.vim
+" Instead of reverting the cursor to the last position in the buffer, we
+" set it to the first line when editing a git commit message
+au FileType gitcommit au! BufEnter COMMIT_EDITMSG
+    \ call setpos('.', [0, 1, 1, 0])
+au VimEnter * :call SetTabLabel()
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+autocmd BufRead,BufNewFile *.json setf json
+autocmd BufNewFile,BufReadPost *.xtpl set filetype=html
+autocmd BufNewFile,BufRead *.vm set ft=velocity
+autocmd BufNewFile,BufRead *.xtpl set ft=html
+autocmd BufNewFile,BufRead *.ejs set ft=html
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xtpl set ft=html
+autocmd BufNewFile,BufRead *.rss,*.atom setfiletype xml
+autocmd FocusGained, BufEnter * :silent! !
+autocmd FileType python syn keyword pythonDecorator True None False self
+autocmd BufNewFile,BufRead *.jinja set syntax=htmljinja
+autocmd BufNewFile,BufRead *.mako set ft=mako
+autocmd BufRead,BufNewFile *.md set filetype=markdown
+au! BufRead,BufNewFile *.bat
+    \ if getline(1) =~ '--\*-Perl-\*--' | setf perl | endif
+autocmd WinEnter call SetTabLabel()
+autocmd BufEnter call SetTabLabel()
+"https://superuser.com/questions/195022/vim-how-to-synchronize-nerdtree-with-current-opened-tab-file-path
+if expand("%:p")
+autocmd BufEnter * lcd %:p:h
+endif
+"http://inlehmansterms.net/2014/09/04/sane-vim-working-directories/
+"http://vim.wikia.com/wiki/Set_working_directory_to_the_current_file
+autocmd BufEnter * silent! lcd %:p:h
+autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
+let s:default_path = escape(&path, '\ ') " store default value of 'path'
+
+" Always add the current file's directory to the path and tags list if not
+" already there. Add it to the beginning to speed up searches.
+autocmd BufRead *
+    \ let s:tempPath=escape(escape(expand("%:p:h"), ' '), '\ ') |
+    \ exec "set path-=".s:tempPath |
+    \ exec "set path-=".s:default_path |
+    \ exec "set path^=".s:tempPath |
+    \ exec "set path^=".s:default_path
+autocmd Filetype *
+    \if &omnifunc == "" |
+    \setlocal omnifunc=syntaxcomplete#Complete |
+    \endif
+" Automatically open and close the popup menu / preview window
+au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
+" Restore cursor position upon reopening files {{{
+autocmd BufReadPost *
+  \ if &filetype != "gitcommit" && line("'\"") > 0 && line("'\"") <= line("$") |
+  \   exe "normal! g`\"" |
+  \ endif
+" }}}
+" gnuplot syntax highlighting
+au BufNewFile,BufRead *.plt,.gnuplot setf gnuplot
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd FileType ruby set dictionary+=~/.vim/dict/ruby.dict
+au FileType javascript set dictionary+=$HOME/.vim/dict/node.dict
 """"""""""""""""""""""""""""""
 " =>自定义函数
 """"""""""""""""""""""""""""""
@@ -143,6 +228,40 @@ function! MySys()
     endif
 endfunction
 
+
+function! GuiTabLabel()
+  let label = ''
+  let bufnrlist = tabpagebuflist(v:lnum)
+  " Add '+' if one of the buffers in the tab page is modified
+  for bufnr in bufnrlist
+    if getbufvar(bufnr, "&modified")
+      let label = '+'
+      break
+    endif
+  endfor
+  " Append the tab number
+  let label .= v:lnum.': '
+  " Append the buffer name
+  let name = bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
+  if name == ''
+    " give a name to no-name documents
+    if &buftype=='quickfix'
+      let name = '[Quickfix List]'
+    else
+      let name = '[No Name]'
+    endif
+  else
+    " get only the file name
+    let name = fnamemodify(name,":t")
+  endif
+  let label .= name
+  " Append the number of windows in the tab page
+  let wincount = tabpagewinnr(v:lnum, '$')
+  return label . '  [' . wincount . ']'
+endfunction
+function! SetTabLabel()
+  set guitablabel=%{GuiTabLabel()}
+endfunction
 
 "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -200,7 +319,7 @@ set background=dark
 colorscheme solarized
 "****字体
 set gfn=Ubuntu\ Mono\ 12
-set fileencodings=utf-8,gb2312,gbk,gb18030
+set fileencodings=utf-8,gbk,utf-16le,cp1252,iso-8859-15,ucs-bom
 set termencoding=utf-8
 "****高亮
 syntax enable     " 语法高亮
@@ -220,21 +339,30 @@ set ai!                   " 自动对齐
 set autochdir             " 自动切换当前目录为当前文件所在的目录
 set clipboard+=unnamed    " 共享外部剪切板
 set completeopt=longest,menuone
+set conceallevel=0
 set diffexpr=MyDiff() " 设置自定义diff
 set helpheight=10
 set helplang=cn
 set hidden " 允许在有未保存的修改时切换缓冲区，此时的修改由 vim 负责保存
+set lazyredraw "当运行宏时，不重绘 
 set magic  " For regular expressions turn magic on
 set mat=4  " How many tenths of a second to blink
 set pumheight=10
 set report=0
 set scrolloff=5 " 上下可视行数
-set conceallevel=0
-
+set switchbuf=useopen "显示已打开窗口，快速修复缓冲区，而不是打开新文件 
 "****设置leader
 let mapleader=","
 let g:mapleader = ","
-
+"****设置dict
+set dictionary+=/usr/share/dict/words
+set dictionary+=~/.vim/dict/
+set tags=./tags;/,~/.vimtags
+" Make tags placed in .git/tags file available in all levels of a repository
+let gitroot = substitute(system('git rev-parse --show-toplevel'), '[\n\r]', '', 'g')
+if gitroot != ''
+  let &tags = &tags . ',' . gitroot . '/.git/tags'
+endif
 "****搜索
 set ignorecase " 搜索时忽略大小写
 set incsearch  " 增量搜索
@@ -244,8 +372,13 @@ set hlsearch   " 高亮显示搜索结果
 set history=100 " 设置冒号命令和搜索命令的命令历史列表的长度
 set showcmd     " 显示未完成指令
 set wildmenu    " 在输入命令时列出匹配项目 命令行补全
-set wildignore=*.bak,*.o,*.e,*~
-set wildmode=list:longest,full
+set wildignore=*.o,*~,*.pyc,*.swp,*.bak,*.class " tab键的自动完成现在会忽略这些
+if has("win16") || has("win32")
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+else
+  set wildignore+=.git\*,.hg\*,.svn\*
+endif
+set wildmode=list:longest,full "增强模式打开列表 
 "}}}
 
 "==========>缩进排版<=========="
@@ -261,7 +394,7 @@ set showmatch     " 高亮显示匹配的括号
 set smartindent   " 智能对齐方式
 set smartcase     " if there are caps,go case-sensitive
 set textwidth=10000
-set whichwrap=h,l
+set whichwrap=b,s,h,l,<,>,>h,[,]  " 允许backspace和光标键跨越行边界 
 
 "****相关按键格式设置
 
@@ -393,7 +526,22 @@ augroup END
 " =>相关插件配置
 """"""""""""""""""""""""""""""
 "{{{1
-
+"==========>airline<=========="
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.linenr = '⭡'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.whitespace = 'Ξ'
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.branch = '⭠'
+let g:airline_left_sep = '⮀'
+let g:airline_left_alt_sep = '⮁'
+let g:airline_right_sep = '⮂'
+let g:airline_right_alt_sep = '⮃'
+let g:airline_theme='dark'
 "==========>bufexplorer<=========="
 let g:bufExplorerDefaultHelp = 1
 let g:bufExplorerDetailedHelp = 0
@@ -438,6 +586,8 @@ nmap <leader>dc a/*  */<LEFT><LEFT><LEFT>
 "let g:tagbar_width = 25
 "let g:tarbar_phpctags_bin ='D:\develop\Vim\vimfiles\techlivezheng-tagbar-phpctags'
 "nmap <F10>  :TarBarToggle<CR>
+"==========>Emmet<=========="
+nmap <c-e> :call emmet#expandAbbr(3,"") <CR>
 "==========>fencview<=========="
 let g:fencview_autodetect = 1           
 
@@ -450,9 +600,20 @@ if MySys() == "windows"
 endif
 nmap <F3> :Grep -nR<cr>
 
+"==========>indentLine<=========="
+map <leader>il :IndentLinesToggle<CR>
 "==========>Jsbeautify<=========="
-nmap <leader>fj :call g:Jsbeautify()<CR>
-
+nmap                                 <leader> fj :call Jsbeautify()<CR>
+autocmd FileType javascript noremap  <leader> fj :call JsBeautify()<cr>
+autocmd FileType json noremap        <leader> fj :call JsonBeautify()<cr>
+autocmd FileType jsx noremap         <leader> fj :call JsxBeautify()<cr>
+autocmd FileType html noremap        <leader> fj :call HtmlBeautify()<cr>
+autocmd FileType css noremap         <leader> fj :call CSSBeautify()<cr>
+autocmd FileType javascript vnoremap <leader> fj :call RangeJsBeautify()<cr>
+autocmd FileType json vnoremap       <leader> fj :call RangeJsonBeautify()<cr>
+autocmd FileType jsx vnoremap        <leader> fj :call RangeJsxBeautify()<cr>
+autocmd FileType html vnoremap       <leader> fj :call RangeHtmlBeautify()<cr>
+autocmd FileType css vnoremap        <leader> fj :call RangeCSSBeautify()<cr>
 "==========>LookupFile setting<=========="
 if filereadable(".tags.filename")
 	let g:LookupFile_TagExpr='"./tags.filename"' "设置tag文件的名字
@@ -479,24 +640,126 @@ let g:NERDTreeWinSize=25
 let NERDTreeShowLineNumbers=0
 let g:NERDTreeDirArrows=0
 nmap <F11>  :NERDTreeToggle<CR>
+"==========>syntastic<=========="
+set statusline+=%{SyntasticStatuslineFlag()}
+let g:syntastic_check_on_open=0
+let g:syntastic_always_populate_loc_list=1
+let g:syntastic_auto_loc_list=1
+let g:syntastic_check_on_wq=1
+let g:syntastic_enable_signs=1
+let g:syntastic_aggregate_errors=1
+let g:syntastic_error_symbol="E"
+let g:syntastic_warning_symbol="W"
+highlight SyntasticError guibg=#2F0000
+nnoremap <leader>n :lnext<CR>
+nnoremap <leader>p :lprevious<CR>
+"prerequisite:
+"  npm packages:
+"    eslint jsxhint babel-eslint eslint-plugin-react json-lint jshint
+"let g:syntastic_javascript_checkers = ['eslint',
+"    \'jsxhint', 'babel-eslint', 'eslint-plugin-react', 'json-lint',
+"    \'jshint', 'jscs']
+let g:syntastic_json_checkers=['jsonlint']
+let g:syntastic_javascript_checkers = ['eslint']
+"let g:syntastic_javascript_jsxhint_exec = 'jsx-jshint-wrapper'
+let g:syntastic_python_checkers = ['pylint']
+"let g:syntastic_python_python_exec="/usr/local/bin/python3"
+let g:syntastic_sass_checkers = ['sass', 'sassc']
+"let g:syntastic_scss_checkers = ['sass', 'sassc', 'scsslint']
+let g:syntastic_php_checkers = ['php']
+"let g:syntastic_ruby_checkers = ['robocop']
+"let g:syntastic_coffee_checkes = ['coffeelint']
+let g:syntastic_shell_checkers = ['shellcheck']
+" Set up the arrays to ignore for later
+if !exists('g:syntastic_html_tidy_ignore_errors')
+    let g:syntastic_html_tidy_ignore_errors = []
+endif
+if !exists('g:syntastic_html_tidy_blocklevel_tags')
+    let g:syntastic_html_tidy_blocklevel_tags = []
+endif
+" Try to use HTML5 Tidy for better checking?
+let g:syntastic_html_tidy_exec = '/usr/local/bin/tidy5'
+" AP: honestly can't remember if this helps or not
+" installed with homebrew locally
 
-"==========>indentLine<=========="
-map <leader>il :IndentLinesToggle<CR>
-
+" Ignore ionic tags in HTML syntax checking
+" See http://stackoverflow.com/questions/30366621
+" ignore errors about Ionic tags
+let g:syntastic_html_tidy_ignore_errors += [
+      \ "<ion-",
+      \ "discarding unexpected </ion-"]
+" Angular's attributes confuse HTML Tidy
+let g:syntastic_html_tidy_ignore_errors += [
+      \ " proprietary attribute \"ng-"]
+" Angular UI-Router attributes confuse HTML Tidy
+let g:syntastic_html_tidy_ignore_errors += [
+      \ " proprietary attribute \"ui-sref"]
+" Angular in particular often makes 'empty' blocks, so ignore
+" this error. We might improve how we do this though.
+" See also https://github.com/scrooloose/syntastic/wiki/HTML:---tidy
+" specifically g:syntastic_html_tidy_empty_tags
+let g:syntastic_html_tidy_ignore_errors += ["trimming empty "]
+" Angular ignores
+let g:syntastic_html_tidy_blocklevel_tags += [
+      \ 'ng-include',
+      \ 'ng-form'
+      \ ]
+" Angular UI-router ignores
+let g:syntastic_html_tidy_ignore_errors += [
+      \ " proprietary attribute \"ui-sref"]
 "==========>txtbrowser<=========="
 au BufEnter *.txt setlocal ft=txt
 
-"==========>yanking<=========="
-nmap  <F8> :YRShow <CR> 
-
-"==========>Emmet<=========="
-nmap <c-e> :call emmet#expandAbbr(3,"") <CR>
 "==========>ultisnips<=========="
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<c-tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsUsePythonVersion     = 2
+let g:UltiSnipsExpandTrigger       = "<c-tab>"
+let g:UltiSnipsListSnippets        = "<c-l>"
+let g:UltiSnipsJumpForwardTrigger  = "<c-j>"
+let g:UltiSnipsJumpBackwardTrigger = "<c-k>"
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+"==========>yanking<=========="
+nmap  <F8> :YRShow <CR> 
+
+"==========>YouCompleteMe<=========="
+let g:ycm_min_num_of_chars_for_completion = 3
+let g:ycm_autoclose_preview_window_after_completion=1
+let g:ycm_complete_in_comments = 1
+"leave '<tab>', '<c-j>' for ultisnips
+let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
+"leave '<s-tab>', '<c-k>' for ultisnips
+let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+" http://www.alexeyshmalko.com/2014/youcompleteme-ultimate-autocomplete-plugin-for-vim/
+let g:ycm_key_list_select_completion=[]
+let g:ycm_key_list_previous_completion=[]
+let g:ycm_filetype_blacklist = {
+      \ 'tagbar' : 1,
+      \ 'qf' : 1,
+      \ 'notes' : 1,
+      \ 'markdown' : 1,
+      \ 'unite' : 1,
+      \ 'text' : 1,
+      \ 'vimwiki' : 1,
+      \ 'pandoc' : 1,
+      \ 'infolog' : 1,
+      \ 'mail' : 1
+      \}
+let g:ycm_semantic_triggers =  {
+      \ 'c' : ['->', '.'],
+      \ 'objc' : ['->', '.'],
+      \ 'ocaml' : ['.', '#'],
+      \ 'cpp,objcpp' : ['->', '.', '::'],
+      \ 'perl' : ['->'],
+      \ 'php' : ['->', '::'],
+      \ 'cs,java,javascript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+      \ 'vim' : ['re![_a-zA-Z]+[_\w]*\.'],
+      \ 'ruby' : ['.', '::'],
+      \ 'lua' : ['.', ':'],
+      \ 'erlang' : [':'],
+      \}
 "}}}
+

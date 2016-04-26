@@ -4,7 +4,7 @@
 "
 "    创建者  : ptyz030529 <seikou05201202@gmail.com>
 "    创建日期: 2010-09-02
-"    最后变更: 2013-01-03
+"    最后变更: 2016-04-26
 set nocompatible  "关闭兼容模式
 source $VIMRUNTIME/vimrc_example.vim
 source $VIMRUNTIME/mswin.vim
